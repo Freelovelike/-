@@ -14,6 +14,10 @@ app.use(express.urlencoded({ extended: false }))
 // 配置解析JSON格式的中间件
 app.use(express.json())
 
+// 导入并使用用户路由模块
+const userRouter=require('./router/user.js')
+app.use('/api',userRouter)
+
 // 启动服务器
 app.listen(80, () => {
     console.log('服务器启动成功,http://127.0.0.1:80')       
