@@ -9,21 +9,22 @@ exports.regUser = function(req, res){
     // 获取客户端提交到服务器的用户信息
     const userInfo=req.body
     if(!userInfo.username || !userInfo.password){
-        return res.send({code:400,msg:'用户名或密码不能为空'})
+        // return res.send({code:400,msg:'用户名或密码不能为空'})
+        return res.cc(400,'用户名或密码不能为空')
     }
     // 定义SQL语句，查询用户名是否被占用
     const sqlStr='select * from ev_users where username=?'
     db.query(sqlStr,[userInfo.username],(err,results)=>{
-            if(err) return res.send({code:500,msg:'数据库查询错误'})
+            if(err) return res.cc(500,'数据库查询错误')
             if(results.length>0){
                 return res.send({code:400,msg:'用户名已存在'})
             }
             // 执行其他操作--将输入插入数据库
             const insertSql='insert into ev_users set ?'
             db.query(insertSql,userInfo,(err,results)=>{
-                if(err) return res.send({code:500,msg:'数据库插入错误'})
+                if(err) return res.cc(500,'数据库插入错误')
                 if(results.affectedRows>0){
-                    return res.send({code:200,msg:'注册成功'})
+                    return res.cc(200,'注册成功')
                 }
             })
         }
