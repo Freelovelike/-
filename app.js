@@ -27,7 +27,16 @@ app.use((req, res, next) => {
 
 // 导入并使用用户路由模块
 const userRouter=require('./router/user.js')
+const joi=require('joi')
 app.use('/api',userRouter)
+
+
+// 定义错误级别的中间件
+app.use((err, req, res, next) => {
+    // 验证失败导致的错误
+    if(err instanceof joi.ValidationError) res.cc(400, err)
+    res.cc(500, err)
+})
 
 // 启动服务器
 app.listen(80, () => {

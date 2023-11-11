@@ -8,10 +8,6 @@ const db=require('../db/index.js')
 exports.regUser = function(req, res){
     // 获取客户端提交到服务器的用户信息
     const userInfo=req.body
-    if(!userInfo.username || !userInfo.password){
-        // return res.send({code:400,msg:'用户名或密码不能为空'})
-        return res.cc(400,'用户名或密码不能为空')
-    }
     // 定义SQL语句，查询用户名是否被占用
     const sqlStr='select * from ev_users where username=?'
     db.query(sqlStr,[userInfo.username],(err,results)=>{
