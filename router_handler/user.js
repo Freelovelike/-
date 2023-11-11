@@ -29,5 +29,16 @@ exports.regUser = function(req, res){
 
 //登录的处理函数
 exports.login = function(req, res){
-    res.send('登录')
+    // 获取客户端提交到服务器的用户信息
+    const userInfo=req.body
+    console.log(userInfo);
+    // 定义SQL语句
+    const sqlStr='select * from ev_users where username=? and password=?'
+    db.query(sqlStr,[userInfo.username,userInfo.password],(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        if(results.length!==1){
+            return res.cc(200,'登录失败')
+        }
+        res.send('登录成功')
+    })
 }
