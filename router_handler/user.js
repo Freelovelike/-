@@ -4,6 +4,11 @@
 // 导入数据库模块
 const db=require('../db/index.js')
 
+// 导入生成Token的包
+const jwt=require('jsonwebtoken')
+// 导入全局的配置文件
+const config=require('../config.js')
+
 //注册用户的处理函数
 exports.regUser = function(req, res){
     // 获取客户端提交到服务器的用户信息
@@ -31,7 +36,6 @@ exports.regUser = function(req, res){
 exports.login = function(req, res){
     // 获取客户端提交到服务器的用户信息
     const userInfo=req.body
-    console.log(userInfo);
     // 定义SQL语句
     const sqlStr='select * from ev_users where username=? and password=?'
     db.query(sqlStr,[userInfo.username,userInfo.password],(err,results)=>{
@@ -39,6 +43,12 @@ exports.login = function(req, res){
         if(results.length!==1){
             return res.cc(200,'登录失败')
         }
-        res.send('登录成功')
+        // TODO: 在服务端生成Token的字符串
+        const user={...results[0],password:'',user_pic:''}
+        // 对用户的信息进行加密，生成Token字符串
+        const token=jwt.sign(user,config.jwtSecretKey,{expiresIn:config.expiresIn})
+        // 调用res.send()将Token响应给客户端
+        res.send({code:200,msg:'登录成功',token:'Bearer '+token})
+        console.log(token);
     })
 }
