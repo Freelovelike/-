@@ -18,5 +18,6 @@ router.post('/reguser',expressJoi(reg_login_schema),userHandler.regUser)
 // 登录
 router.post('/login',expressJoi(reg_login_schema),userHandler.login)
 
+
 // 将路由对象暴露出去
 module.exports=router

@@ -41,7 +41,7 @@ exports.login = function(req, res){
     db.query(sqlStr,[userInfo.username,userInfo.password],(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         if(results.length!==1){
-            return res.cc(200,'登录失败')
+            return res.cc(400,'登录失败')
         }
         // TODO: 在服务端生成Token的字符串
         const user={...results[0],password:'',user_pic:''}
@@ -49,6 +49,5 @@ exports.login = function(req, res){
         const token=jwt.sign(user,config.jwtSecretKey,{expiresIn:config.expiresIn})
         // 调用res.send()将Token响应给客户端
         res.send({code:200,msg:'登录成功',token:'Bearer '+token})
-        console.log(token);
     })
 }
