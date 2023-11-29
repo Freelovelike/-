@@ -20,14 +20,14 @@ exports.getUserInfo=(req,res)=>{
 }
 
 // 根据用户名获取当前用户信息
-exports.getUserInfo = function(req, res){
+exports.getUserName = function(req, res){
     // 获取客户端提交到服务器的用户信息
     const userInfo=req.query
     // 定义SQL语句
     const sqlStr='select * from ev_users where username=?'
+    const roleStr='select roleId,roleName  from ev_role where roleId=?'
     db.query(sqlStr,[userInfo.username],(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        console.log(results,'results');
         if(results.length!==1){
             return res.cc(400,'用户名或Token错误')
         }
@@ -37,20 +37,20 @@ exports.getUserInfo = function(req, res){
             password:results[0].password,
             email:results[0].email,
             userPic:results[0].userPic,
-            role:{
-                roleId:results[0].roleId,
-                roleName:results[0].roleName
-            },
+            role:{},
             roleId:results[0].roleId
         }
-        // 调用res.send()将Token响应给客户端
-        res.send({code:200,msg:'获取成功',data:userLis})
+        db.query(roleStr,[userLis.roleId],(err,dataArr)=>{
+            userLis.role=dataArr[0]
+            // 调用res.send()将Token响应给客户端
+            res.send({code:200,msg:'获取成功',data:userLis})
+        })
     })
 }
 
 // 查询角色列表
 exports.getRoleList = function(req, res){
-    const sqlStr='select id,roleId,roleName from ev_users'
+    const sqlStr='select * from ev_role'
     db.query(sqlStr,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         res.send({code:200,msg:'获取成功',data:results})

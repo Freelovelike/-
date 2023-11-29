@@ -7,7 +7,7 @@ const userInfo=require('../router_handler/userInfo')
 router.get('/userInfo',userInfo.getUserInfo)
 
 // 根据用户名获取当前用户信息
-router.get('/getUserInfo',userInfo.getUserInfo)
+router.get('/getUserInfo',userInfo.getUserName)
 
 // 查询角色列表
 router.get('/roleList',userInfo.getRoleList)
