@@ -18,4 +18,7 @@ router.post('/addRole',userInfo.addRole)
 //更新角色信息
 router.post('/updateRole',userInfo.updateRole)
 
+//删除角色信息
+router.get('/deleteRole',userInfo.deleteRole)
+
 module.exports=router

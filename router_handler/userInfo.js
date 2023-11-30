@@ -76,3 +76,13 @@ exports.updateRole = function(req, res){
         res.send({code:200,msg:'更新成功'})
     })
 }
+
+// 删除角色信息
+exports.deleteRole = function(req, res){   
+    const roleId=req.query.roleId
+    const sqlStr='delete from ev_role where roleId=?'
+    db.query(sqlStr,roleId,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'删除成功'})
+    })
+}
