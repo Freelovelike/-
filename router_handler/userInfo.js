@@ -50,10 +50,24 @@ exports.getUserName = function(req, res){
 
 // 查询角色列表
 exports.getRoleList = function(req, res){
-    const sqlStr='select * from ev_role'
+    // 获取客户端传递的分页参数，默认为第一页，每页5条数据
+    const page = req.query.page || 1
+    const pageSize = req.query.pageSize || 5
+    // 计算 OFFSET 值
+    const offset = (page - 1) * pageSize
+    // 构建 SQL 查询语句，带有 LIMIT 和 OFFSET 子句
+    const sqlStr = `select * from ev_role limit ${pageSize} offset ${offset}`
+    // 执行查询
     db.query(sqlStr,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        res.send({code:200,msg:'获取成功',data:results})
+        // 查询总行数的 SQL 语句
+        const countSql = 'select count(*) as total from ev_role'
+        db.query(countSql,(err,count)=>{
+            if(err) return res.cc(500,'数据库查询错误')
+            // 提取总行数
+            const total = count[0].total
+            res.send({code:200,msg:'获取成功',data:results,page,pageSize,total })
+        })
     })
 }
 
