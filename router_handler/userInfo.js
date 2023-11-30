@@ -66,3 +66,13 @@ exports.addRole = function(req, res){
         res.send({code:200,msg:'新增成功'})
     })
 }
+
+//更新角色信息
+exports.updateRole = function(req, res){
+    const  roleInfo=req.body
+    const sqlStr='update ev_role set ? where roleId=?'
+    db.query(sqlStr, [roleInfo,roleInfo.roleId],(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'更新成功'})
+    })
+}

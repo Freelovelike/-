@@ -15,4 +15,7 @@ router.get('/roleList',userInfo.getRoleList)
 // 新增角色列表
 router.post('/addRole',userInfo.addRole)
 
+//更新角色信息
+router.post('/updateRole',userInfo.updateRole)
+
 module.exports=router
