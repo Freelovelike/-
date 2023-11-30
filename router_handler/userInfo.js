@@ -56,3 +56,13 @@ exports.getRoleList = function(req, res){
         res.send({code:200,msg:'获取成功',data:results})
     })
 }
+
+// 新增角色列表
+exports.addRole = function(req, res){
+    const roleInfo=req.body
+    const sqlStr='insert into ev_role set ?'
+    db.query(sqlStr,roleInfo,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'新增成功'})
+    })
+}

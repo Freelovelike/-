@@ -12,4 +12,7 @@ router.get('/getUserInfo',userInfo.getUserName)
 // 查询角色列表
 router.get('/roleList',userInfo.getRoleList)
 
+// 新增角色列表
+router.post('/addRole',userInfo.addRole)
+
 module.exports=router
