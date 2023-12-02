@@ -9,6 +9,9 @@ router.get('/userInfo',userInfo.getUserInfo)
 // 根据用户名获取当前用户信息
 router.get('/getUserInfo',userInfo.getUserName)
 
+// 查询用户列表
+router.get('/userList',userInfo.getUserList)
+
 // 查询角色列表
 router.get('/roleList',userInfo.getRoleList)
 

@@ -48,6 +48,28 @@ exports.getUserName = function(req, res){
     })
 }
 
+// 获取用户列表信息
+exports.getUserList = function(req, res){
+    // 获取客户端传递的分页参数，默认为第一页，每页5条数据
+    const page = req.query.page || 1
+    const pageSize = req.query.pageSize || 5
+    // 计算 OFFSET 值
+    const offset = (page - 1) * pageSize
+    // 构建 SQL 查询语句，带有 LIMIT 和 OFFSET 子句
+    const sqlStr = `select * from ev_users limit ${pageSize} offset ${offset}`
+    db.query(sqlStr,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        // 查询总行数的SQL语句
+        const countSql = `select count(*) as c from ev_users`
+        db.query(countSql,(err,count)=>{
+            if(err) return res.cc(500,'数据库查询错误')
+            // 提取总行数
+            const total = count[0].total
+            res.send({code:200,msg:'获取成功',data:results,page,pageSize,total })
+        })
+    })
+}
+
 // 查询角色列表
 exports.getRoleList = function(req, res){
     // 获取客户端传递的分页参数，默认为第一页，每页5条数据
