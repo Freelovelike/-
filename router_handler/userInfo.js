@@ -88,6 +88,17 @@ exports.getUserList = function(req, res){
     })
 }
 
+// 删除用户信息
+exports.deleteUser=(req,res)=>{
+    const id=req.query.id
+    const sqlStr='delete from ev_users where id=?'
+    db.query(sqlStr,[id],(err,data)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        if(data.affectedRows>0) return res.cc(200,'删除成功')
+        return res.cc(500,'删除失败')
+    })
+}
+
 // 查询角色列表
 exports.getRoleList = function(req, res){
     // 获取客户端传递的分页参数，默认为第一页，每页5条数据
