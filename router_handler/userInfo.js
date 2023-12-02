@@ -61,7 +61,7 @@ exports.getUserList = function(req, res){
     db.query(sqlStr,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         // 查询总行数的SQL语句
-        const countSql = `select count(*) as c from ev_users`
+        const countSql = `select count(*) as total from ev_users`
         db.query(countSql,(err,count)=>{
             if(err) return res.cc(500,'数据库查询错误')
             // 提取总行数
@@ -96,6 +96,28 @@ exports.deleteUser=(req,res)=>{
         if(err) return res.cc(500,'数据库查询错误')
         if(data.affectedRows>0) return res.cc(200,'删除成功')
         return res.cc(500,'删除失败')
+    })
+}
+
+// 新增用户信息
+exports.addUser=(req,res)=>{
+    const userInfo=req.body
+    const sqlStr='insert into ev_users set ?'
+    db.query(sqlStr,userInfo,(err,data)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        if(data.affectedRows>0) return res.cc(200,'新增成功')
+        return res.cc(500,'新增失败')
+    })
+}
+
+// 编辑用户信息
+exports.editUser=(req,res)=>{
+    const userInfo=req.body
+    const sqlStr='update ev_users set ? where id=?'
+    db.query(sqlStr,[userInfo,userInfo.id],(err,data)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        if(data.affectedRows>0) return res.cc(200,'编辑成功')
+        return res.cc(500,'编辑失败')
     })
 }
 

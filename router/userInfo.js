@@ -15,6 +15,12 @@ router.get('/userList',userInfo.getUserList)
 //删除用户信息
 router.get('/deleteUser',userInfo.deleteUser)
 
+//新增用户信息
+router.post('/addUser',userInfo.addUser)
+
+//更新用户信息
+router.post('/editUser',userInfo.editUser)
+
 // 查询角色列表
 router.get('/roleList',userInfo.getRoleList)
 
