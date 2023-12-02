@@ -57,6 +57,7 @@ exports.getUserList = function(req, res){
     const offset = (page - 1) * pageSize
     // 构建 SQL 查询语句，带有 LIMIT 和 OFFSET 子句
     const sqlStr = `select * from ev_users limit ${pageSize} offset ${offset}`
+    const roleStr='select *  from ev_role where roleId=?'
     db.query(sqlStr,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         // 查询总行数的SQL语句
@@ -65,7 +66,24 @@ exports.getUserList = function(req, res){
             if(err) return res.cc(500,'数据库查询错误')
             // 提取总行数
             const total = count[0].total
-            res.send({code:200,msg:'获取成功',data:results,page,pageSize,total })
+            // 使用 Promise.all 来处理异步操作
+            const  promises=results.map(item=>{
+                return new Promise((resolve,reject)=>{
+                    db.query(roleStr,[item.roleId],(err,dataArr)=>{
+                        if(err) return reject(err)
+                        item.role=dataArr[0]
+                        resolve(item)
+                    })
+                })
+            })
+            // 等待所有异步操作完成后，再处理结果
+            Promise.all(promises).then(items=>{
+                // 这里可以使用处理完异步操作后的 items 数组
+                res.send({code:200,msg:'获取成功',data:items,page,pageSize,total })
+            }).catch(error=>{
+                // 处理错误
+                return res.cc(500, '数据库查询错误');
+            })
         })
     })
 }
