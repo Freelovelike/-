@@ -154,6 +154,7 @@ exports.addRole = function(req, res){
     })
 }
 
+
 //更新角色信息
 exports.updateRole = function(req, res){
     const  roleInfo=req.body
