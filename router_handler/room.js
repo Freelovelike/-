@@ -35,3 +35,13 @@ exports.addRoomType = (req,res)=>{
         res.send({code:200,msg:'新增成功'})
     })
 }
+
+// 编辑房型信息
+exports.editRoomType = (req,res)=>{
+    const roomInfo = req.body
+    const sqlStr='update ev_room set ?  where roomTypeId=?'
+    db.query(sqlStr,[roomInfo,roomInfo.roomTypeId],(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'编辑成功'})
+    })
+}

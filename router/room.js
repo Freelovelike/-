@@ -12,5 +12,8 @@ router.get('/getRoomType',roomType.findRoomTypeList)
 // 新增房型信息
 router.post('/addRoomType',roomType.addRoomType)
 
+// 编辑房型信息
+router.post('/editRoomType',roomType.editRoomType)
+
 // 将路由对象暴露出去
 module.exports=router
