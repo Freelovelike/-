@@ -22,3 +22,16 @@ exports.findRoomTypeList = (req,res)=>{
         })
     })
 }
+
+// 新增房型信息
+exports.addRoomType = (req,res)=>{
+    // 获取用户提交过来的数据
+    const roomInfo = req.body
+    // 新增sql语句
+    const sqlStr='insert into ev_room set ?'
+    // 查询
+    db.query(sqlStr,roomInfo,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'新增成功'})
+    })
+}

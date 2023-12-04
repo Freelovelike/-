@@ -9,5 +9,8 @@ const roomType=require('../router_handler/room')
 // 查询房型列表
 router.get('/getRoomType',roomType.findRoomTypeList)
 
+// 新增房型信息
+router.post('/addRoomType',roomType.addRoomType)
+
 // 将路由对象暴露出去
 module.exports=router
