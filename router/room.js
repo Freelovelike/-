@@ -15,5 +15,8 @@ router.post('/addRoomType',roomType.addRoomType)
 // 编辑房型信息
 router.post('/editRoomType',roomType.editRoomType)
 
+// 删除房型
+router.get('/delRoomType',roomType.deleteRoomType)
+
 // 将路由对象暴露出去
 module.exports=router

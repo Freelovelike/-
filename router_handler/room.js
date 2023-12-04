@@ -45,3 +45,13 @@ exports.editRoomType = (req,res)=>{
         res.send({code:200,msg:'编辑成功'})
     })
 }
+
+// 删除房型
+exports.deleteRoomType = (req,res)=>{
+    const roomTypeId = req.body.roomTypeId
+    const sqlStr = `delete from ev_room where roomTypeId=?`
+    db.query(sqlStr,roomTypeId,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'删除成功'})
+    })
+}
