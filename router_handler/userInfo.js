@@ -25,7 +25,7 @@ exports.getUserName = function(req, res){
     const userInfo=req.query
     // 定义SQL语句
     const sqlStr='select * from ev_users where username=?'
-    const roleStr='select roleId,roleName  from ev_role where roleId=?'
+    const roleStr='select *  from ev_role where roleId=?'
     db.query(sqlStr,[userInfo.username],(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         if(results.length!==1){
@@ -35,7 +35,8 @@ exports.getUserName = function(req, res){
             id:results[0].id,
             username:results[0].username,
             password:results[0].password,
-            email:results[0].email,
+            name:results[0].name,
+            phone:results[0].phone,
             userPic:results[0].userPic,
             role:{},
             roleId:results[0].roleId
@@ -53,14 +54,14 @@ exports.getUserList = function(req, res){
     // 获取客户端传递的分页参数，默认为第一页，每页5条数据
     const page = req.query.page || 1
     const pageSize = req.query.pageSize || 5
-    const roleId=req.query.roleId || 0
+    const roleId=req.query.roleId
     // 计算 OFFSET 值
     const offset = (page - 1) * pageSize
     // 构建 SQL 查询语句，带有 LIMIT 和 OFFSET 子句
     const sqlStr = `select * from ev_users limit ${pageSize} offset ${offset}`
     const sqlStrRoleId=`select * from ev_users where roleId=?  limit ${pageSize} offset ${offset}`
     const roleStr='select *  from ev_role where roleId=?'
-    let sqlData=roleId===0?sqlStr:sqlStrRoleId
+    let sqlData=roleId==='0'?sqlStr:sqlStrRoleId
     db.query(sqlData,[roleId],(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         // 查询总行数的SQL语句
