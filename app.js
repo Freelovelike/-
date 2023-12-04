@@ -36,9 +36,11 @@ app.use(expressJWT({ secret: config.jwtSecretKey }).unless({ path: [/^\/api\//] 
 // 导入并使用用户路由模块
 const userRouter=require('./router/user.js')
 const userInfoRouter=require('./router/userInfo.js')
+const roomRouter=require('./router/room.js')
 const joi=require('joi')
 app.use('/api',userRouter)
 app.use('/my',userInfoRouter)
+app.use('/room',roomRouter)
 
 
 // 定义错误级别的中间件
