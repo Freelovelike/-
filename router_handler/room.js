@@ -32,7 +32,7 @@ exports.addRoomType = (req,res)=>{
     // 查询
     db.query(sqlStr,roomInfo,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        res.send({code:200,msg:'新增成功'})
+        return res.send({code:200,msg:'新增成功'})
     })
 }
 
@@ -42,7 +42,7 @@ exports.editRoomType = (req,res)=>{
     const sqlStr='update ev_roomType set ?  where roomTypeId=?'
     db.query(sqlStr,[roomInfo,roomInfo.roomTypeId],(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        res.send({code:200,msg:'编辑成功'})
+        return res.send({code:200,msg:'编辑成功'})
     })
 }
 
@@ -52,7 +52,7 @@ exports.deleteRoomType = (req,res)=>{
     const sqlStr = 'delete from ev_roomType where roomTypeId=?'
     db.query(sqlStr,roomTypeId,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        res.send({code:200,msg:'删除成功'})
+        return res.send({code:200,msg:'删除成功'})
     })
 }
 
@@ -110,7 +110,7 @@ exports.getRoomList = (req,res)=>{
         db.query(count,(err,results)=>{
             if(err) return res.cc(500,'数据库查询错误')
             const total=results[0].total
-            res.send({code:200,msg:'查询成功',data,page,pageSize,total})
+            return res.send({code:200,msg:'查询成功',data,page,pageSize,total})
         })
     })
 }
@@ -120,7 +120,7 @@ exports.roomStateList = (req,res)=>{
     const sqlStr='select * from ev_roomstate'
     db.query(sqlStr,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        res.send({code:200,msg:'查询成功',data:results})
+        return res.send({code:200,msg:'查询成功',data:results})
     })
 }
 
@@ -130,7 +130,7 @@ exports.roomTypeList = (req,res)=>{
     const sqlStr='select * from ev_roomType'
     db.query(sqlStr,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        res.send({code:200,msg:'查询成功',data:results})
+        return res.send({code:200,msg:'查询成功',data:results})
     })
 }
 
@@ -140,7 +140,7 @@ exports.addRoom=(req,res)=>{
     const sqlStr='insert into ev_room set ?'
     db.query(sqlStr,roomInfo,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        res.send({code:200,msg:'新增成功'})
+        return res.send({code:200,msg:'新增成功'})
     })
 }
 // 编辑房间
@@ -149,7 +149,7 @@ exports.editRoom=(req,res)=>{
     const sqlStr='update ev_room set ? where roomId=?'
     db.query(sqlStr, [roomInfo, roomInfo.roomId], (err, results) => {
         if (err) return res.cc(500, '数据库查询错误')
-        res.send({ code: 200, msg: '编辑成功' })
+        return res.send({ code: 200, msg: '编辑成功' })
     })
 }
 
@@ -159,6 +159,6 @@ exports.delRoom=(req,res)=>{
     const sqlStr='delete from ev_room where roomId=?'
     db.query(sqlStr,roomId,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        res.send({code:200,msg:'删除成功'})
+        return res.send({code:200,msg:'删除成功'})
     })
 }

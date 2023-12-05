@@ -99,7 +99,7 @@ exports.getUserList = function(req, res){
         db.query(count,(err,counts)=>{
             if(err) return res.cc(500,'数据库查询错误')
             const total=counts[0].total
-            res.send({code:200,msg:'查询成功',data,page,pageSize,total})
+            return res.send({code:200,msg:'查询成功',data,page,pageSize,total})
         })
     })
 }
