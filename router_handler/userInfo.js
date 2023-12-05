@@ -69,7 +69,12 @@ exports.getUserList = function(req, res){
         db.query(countSql,(err,count)=>{
             if(err) return res.cc(500,'数据库查询错误')
             // 提取总行数
-            const total = count[0].total
+            let total=0
+            if(roleId==='0'){
+                total=count[0].total
+            }else{
+                total=results.length
+            }
             // 使用 Promise.all 来处理异步操作
             const  promises=results.map(item=>{
                 return new Promise((resolve,reject)=>{

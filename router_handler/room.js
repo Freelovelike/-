@@ -62,9 +62,9 @@ exports.getRoomList = (req,res)=>{
     const page = req.query.page || 1
     const pageSize = req.query.pageSize || 5
     // 状态ID
-    const roomStateId=req.query.roomStateId||null
+    const roomStateId=req.query.roomStateId==='0'?null:req.query.roomStateId
     // 类型ID
-    const roomTypeId=req.query.roomTypeId||null
+    const roomTypeId=req.query.roomTypeId==='0'?null:req.query.roomTypeId
     // 计算 OFFSET 值
     const offset = (page - 1) * pageSize
     // 构建sql语句
@@ -98,12 +98,18 @@ exports.getRoomList = (req,res)=>{
                 description:item.description
             }
         })
-        const count='select count(*) as total from ev_room'
+        const count=`
+        SELECT COUNT(*) AS total
+        FROM ev_room
+        JOIN ev_roomstate ON ev_room.roomStateId = ev_roomstate.roomStateId
+        JOIN ev_roomType ON ev_room.roomTypeId = ev_roomType.roomTypeId
+        WHERE
+        (${roomStateId} IS NULL OR ev_room.roomStateId = ${roomStateId})
+        AND
+        (${roomTypeId} IS NULL OR ev_room.roomTypeId = ${roomTypeId})`
         db.query(count,(err,results)=>{
             if(err) return res.cc(500,'数据库查询错误')
-            let total=0
-            if(roomStateId) total=data.length
-            else total=results[0].total
+            const total=results[0].total
             res.send({code:200,msg:'查询成功',data,page,pageSize,total})
         })
     })
