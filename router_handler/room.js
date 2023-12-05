@@ -114,3 +114,22 @@ exports.getRoomList = (req,res)=>{
         })
     })
 }
+
+// 查询房间状态列表
+exports.roomStateList = (req,res)=>{
+    const sqlStr='select * from ev_roomstate'
+    db.query(sqlStr,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'查询成功',data:results})
+    })
+}
+
+
+// 查询房间类型列表
+exports.roomTypeList = (req,res)=>{
+    const sqlStr='select * from ev_roomType'
+    db.query(sqlStr,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'查询成功',data:results})
+    })
+}

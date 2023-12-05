@@ -21,5 +21,11 @@ router.get('/delRoomType',roomType.deleteRoomType)
 // 查询房间信息列表
 router.get('/getRoomList',roomType.getRoomList)
 
+// 查询房间状态列表
+router.get('/getRoomStatusList',roomType.roomStateList)
+
+// 查询房间类型列表
+router.get('/getRoomTypeList',roomType.roomTypeList)
+
 // 将路由对象暴露出去
 module.exports=router
