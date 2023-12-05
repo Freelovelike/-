@@ -27,5 +27,14 @@ router.get('/getRoomStatusList',roomType.roomStateList)
 // 查询房间类型列表
 router.get('/getRoomTypeList',roomType.roomTypeList)
 
+// 新增房间
+router.post('/addRoom',roomType.addRoom)
+
+// 编辑房间
+router.post('/editRoom',roomType.editRoom)
+
+// 删除房间
+router.get('/delRoom',roomType.delRoom)
+
 // 将路由对象暴露出去
 module.exports=router
