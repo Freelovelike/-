@@ -9,11 +9,11 @@ exports.findRoomTypeList = (req,res)=>{
     // 计算 OFFSET 值
     const offset = (page - 1) * pageSize
     // 构建 SQL 查询语句，带有 LIMIT 和 OFFSET 子句
-    const sqlStr = `select * from ev_room limit ${pageSize} offset ${offset}`
+    const sqlStr = `select * from ev_roomType limit ${pageSize} offset ${offset}`
     db.query(sqlStr,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         // 查询总行数的SQL语句
-        const countSql = `select count(*) as total from ev_room`
+        const countSql = `select count(*) as total from ev_roomType`
         db.query(countSql,(err,count)=>{
             if(err) return res.cc(500,'数据库查询错误')
             // 提取总行数
@@ -28,7 +28,7 @@ exports.addRoomType = (req,res)=>{
     // 获取用户提交过来的数据
     const roomInfo = req.body
     // 新增sql语句
-    const sqlStr='insert into ev_room set ?'
+    const sqlStr='insert into ev_roomType set ?'
     // 查询
     db.query(sqlStr,roomInfo,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
@@ -39,7 +39,7 @@ exports.addRoomType = (req,res)=>{
 // 编辑房型信息
 exports.editRoomType = (req,res)=>{
     const roomInfo = req.body
-    const sqlStr='update ev_room set ?  where roomTypeId=?'
+    const sqlStr='update ev_roomType set ?  where roomTypeId=?'
     db.query(sqlStr,[roomInfo,roomInfo.roomTypeId],(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         res.send({code:200,msg:'编辑成功'})
@@ -49,9 +49,62 @@ exports.editRoomType = (req,res)=>{
 // 删除房型
 exports.deleteRoomType = (req,res)=>{
     const roomTypeId = req.query.roomTypeId
-    const sqlStr = 'delete from ev_room where roomTypeId=?'
+    const sqlStr = 'delete from ev_roomType where roomTypeId=?'
     db.query(sqlStr,roomTypeId,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
         res.send({code:200,msg:'删除成功'})
+    })
+}
+
+// 获取房间信息列表
+exports.getRoomList = (req,res)=>{
+    // 获取客户端传递的分页参数，默认为第一页，每页5条数据
+    const page = req.query.page || 1
+    const pageSize = req.query.pageSize || 5
+    // 状态ID
+    const roomStateId=req.query.roomStateId||null
+    // 类型ID
+    const roomTypeId=req.query.roomTypeId||null
+    // 计算 OFFSET 值
+    const offset = (page - 1) * pageSize
+    // 构建sql语句
+    const sqlStr=`
+    select * from ev_room 
+    JOIN ev_roomState ON ev_room.roomStateId=ev_roomState.roomStateId 
+    JOIN ev_roomType ON ev_room.roomTypeId=ev_roomType.roomTypeId 
+    where 
+    (${roomStateId} IS NULL OR ev_room.roomStateId = ${roomStateId})
+    AND
+    (${roomTypeId} IS NULL OR ev_room.roomTypeId = ${roomTypeId})
+    limit ${pageSize} offset ${offset}`
+    db.query(sqlStr,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        const data=results.map((item)=>{
+            return {
+                roomId:item.roomId,
+                roomStateId:item.roomStateId,
+                roomState:{
+                    roomStateId:item.roomStateId,
+                    roomStateName:item.roomStateName
+                },
+                roomType:{
+                    bedNum:item.bedNum,
+                    roomTypeId:item.roomTypeId,
+                    roomTypeName:item.roomTypeName,
+                    roomTypePrice:item.roomTypePrice,
+                    typeDescription:item.typeDescription
+                },
+                roomTypeId:item.roomTypeId,
+                description:item.description
+            }
+        })
+        const count='select count(*) as total from ev_room'
+        db.query(count,(err,results)=>{
+            if(err) return res.cc(500,'数据库查询错误')
+            let total=0
+            if(roomStateId) total=data.length
+            else total=results[0].total
+            res.send({code:200,msg:'查询成功',data,page,pageSize,total})
+        })
     })
 }
