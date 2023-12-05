@@ -54,45 +54,52 @@ exports.getUserList = function(req, res){
     // 获取客户端传递的分页参数，默认为第一页，每页5条数据
     const page = req.query.page || 1
     const pageSize = req.query.pageSize || 5
-    const roleId=req.query.roleId
+    const roleId=req.query.roleId==='0'?null:req.query.roleId
     // 计算 OFFSET 值
     const offset = (page - 1) * pageSize
     // 构建 SQL 查询语句，带有 LIMIT 和 OFFSET 子句
-    const sqlStr = `select * from ev_users limit ${pageSize} offset ${offset}`
-    const sqlStrRoleId=`select * from ev_users where roleId=?  limit ${pageSize} offset ${offset}`
-    const roleStr='select *  from ev_role where roleId=?'
-    let sqlData=roleId==='0'?sqlStr:sqlStrRoleId
-    db.query(sqlData,[roleId],(err,results)=>{
+    const sqlStr=`
+    SELECT
+    *
+    FROM
+        ev_users
+    JOIN
+        ev_role ON ev_users.roleId = ev_role.roleId
+    WHERE
+        (${roleId} IS NULL OR ev_users.roleId = ${roleId})
+    LIMIT ${pageSize} OFFSET ${offset}
+    `
+    db.query(sqlStr,(err,results)=>{
         if(err) return res.cc(500,'数据库查询错误')
-        // 查询总行数的SQL语句
-        const countSql = `select count(*) as total from ev_users`
-        db.query(countSql,(err,count)=>{
-            if(err) return res.cc(500,'数据库查询错误')
-            // 提取总行数
-            let total=0
-            if(roleId==='0'){
-                total=count[0].total
-            }else{
-                total=results.length
+        const data=results.map((item)=>{
+            return {
+                id:item.id,
+                username:item.username,
+                password:item.password,
+                name:item.name,
+                phone:item.phone,
+                userPic:item.userPic,
+                roleId:item.roleId,
+                role:{
+                    roleId:item.roleId,
+                    roleName:item.roleName
+                }
             }
-            // 使用 Promise.all 来处理异步操作
-            const  promises=results.map(item=>{
-                return new Promise((resolve,reject)=>{
-                    db.query(roleStr,[item.roleId],(err,dataArr)=>{
-                        if(err) return reject(err)
-                        item.role=dataArr[0]
-                        resolve(item)
-                    })
-                })
-            })
-            // 等待所有异步操作完成后，再处理结果
-            Promise.all(promises).then(items=>{
-                // 这里可以使用处理完异步操作后的 items 数组
-                res.send({code:200,msg:'获取成功',data:items,page,pageSize,total })
-            }).catch(error=>{
-                // 处理错误
-                return res.cc(500, '数据库查询错误');
-            })
+        })
+        const count=`
+        SELECT
+            count(*) AS total
+        FROM
+            ev_users
+        JOIN
+            ev_role ON ev_users.roleId = ev_role.roleId
+        WHERE
+            (${roleId} IS NULL OR ev_users.roleId = ${roleId})
+        `
+        db.query(count,(err,counts)=>{
+            if(err) return res.cc(500,'数据库查询错误')
+            const total=counts[0].total
+            res.send({code:200,msg:'查询成功',data,page,pageSize,total})
         })
     })
 }
