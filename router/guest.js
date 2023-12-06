@@ -12,5 +12,8 @@ router.get('/getGuestList',guest.getUserGuest)
 // 获取结账状态信息列表
 router.get('/getCheckOutList',guest.getCheckOutList)
 
+// 新增顾客（入住用户）
+router.post('/addGuest',guest.addGuest)
+
 // 将路由对象暴露出去
 module.exports=router

@@ -3,7 +3,6 @@ const db = require('../db/index.js')
 
 // 获取入住用户列表信息
 exports.getUserGuest=(req,res)=>{
-    console.log(req.query);
     // 获取客户端传递的分页参数，默认为第一页，每页5条数据
     const page = req.query.page || 1
     const pageSize = req.query.pageSize || 5
@@ -92,5 +91,21 @@ exports.getCheckOutList=(req,res)=>{
     db.query(sqlStr,(err,result)=>{
         if(err) return res.cc(500,'数据库查询错误')
         res.send({code:200,msg:'查询成功',data:result})
+    })
+}
+
+// 新增顾客（入住用户）
+exports.addGuest=(req,res)=>{
+    const guestInfo=req.body
+    const roomId=guestInfo.roomId
+    const sqlStr='insert into ev_guest set ?'
+    db.query(sqlStr,guestInfo,(err,result)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        // 更新房间状态
+        const roomSql='update ev_room set roomStateId=2 where roomId=?'
+        db.query(roomSql,[roomId],(err,result)=>{
+            if(err) return res.cc(500,'数据库查询错误')
+            res.send({code:200,msg:'新增成功'})
+        })
     })
 }
