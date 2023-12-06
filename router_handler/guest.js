@@ -3,6 +3,7 @@ const db = require('../db/index.js')
 
 // 获取入住用户列表信息
 exports.getUserGuest=(req,res)=>{
+    console.log(req.query);
     // 获取客户端传递的分页参数，默认为第一页，每页5条数据
     const page = req.query.page || 1
     const pageSize = req.query.pageSize || 5
@@ -12,21 +13,27 @@ exports.getUserGuest=(req,res)=>{
     const guestName=req.query.guestName==='0'?null:req.query.guestName
     // 计算 OFFSET 值
     const offset = (page - 1) * pageSize
+    const queryParams=[
+        resideStateId,resideStateId,
+        guestName,guestName,
+        pageSize,offset
+    ]
     // 构建sql语句
-    const sqlStr=`
-    select * from ev_guest
-    JOIN ev_residestate ON ev_guest.resideStateId=ev_residestate.resideStateId
-    JOIN ev_room ON ev_guest.roomId=ev_room.roomId
-    JOIN ev_roomstate ON ev_room.roomStateId=ev_roomstate.roomStateId
-    JOIN ev_roomtype ON  ev_room.roomTypeId = ev_roomtype.roomTypeId
-    where 
-    (${resideStateId} IS NULL OR ev_guest.resideStateId = ${resideStateId}) 
-     AND
-    (${guestName} IS NULL OR ev_guest.guestName = ${guestName})
-    limit ${pageSize} offset ${offset}
+    const sqlStr = `
+    SELECT *
+    FROM ev_guest
+    JOIN ev_residestate ON ev_guest.resideStateId = ev_residestate.resideStateId
+    JOIN ev_room ON ev_guest.roomId = ev_room.roomId
+    JOIN ev_roomstate ON ev_room.roomStateId = ev_roomstate.roomStateId
+    JOIN ev_roomtype ON ev_room.roomTypeId = ev_roomtype.roomTypeId
+    WHERE
+        (? IS NULL OR ev_guest.resideStateId = ?)
+        AND
+        (? IS NULL OR ev_guest.guestName = ?)
+    LIMIT ${pageSize} OFFSET ${offset}
     `
     // 执行sql语句
-    db.query(sqlStr,(err,result)=>{
+    db.query(sqlStr,queryParams,(err,result)=>{
         if(err) return res.cc(500,'数据库查询错误')
         const data =result.map((item)=>{
             return {
