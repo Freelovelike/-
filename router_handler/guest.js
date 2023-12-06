@@ -78,3 +78,12 @@ exports.getUserGuest=(req,res)=>{
         })
     })
 }
+
+// 获取结账状态列表
+exports.getCheckOutList=(req,res)=>{
+    const sqlStr='select * from ev_residestate'
+    db.query(sqlStr,(err,result)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'查询成功',data:result})
+    })
+}
