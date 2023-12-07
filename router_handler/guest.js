@@ -111,6 +111,37 @@ exports.addGuest=(req,res)=>{
         })
     })
 }
+// -- 开始事务
+// START TRANSACTION;
+
+// -- 将 ev_room 表中 guestId 为 8 的记录的 guestId 设置为 NULL
+// UPDATE ev_room SET guestId = NULL WHERE guestId = 8;
+
+// -- 将 ev_room 表中 roomId 为 1 的记录的 guestId 设置为 8
+// UPDATE ev_room SET guestId = 8 WHERE roomId = 1;
+
+// -- 更新 ev_guest 表中 guestId 为 3 的记录
+// UPDATE ev_guest SET roomId = 1 WHERE guestId = 8;
+
+// -- 提交事务
+// COMMIT;
+// 编辑顾客（入住用户）
+exports.editGuest=(req,res)=>{
+    const guestInfo=req.body
+    const roomSql=`UPDATE ev_room SET roomStateId=1,guestId = NULL WHERE guestId = ${guestInfo.guestId}`
+    const roomSql2=`UPDATE ev_room SET roomStateId=2,guestId=${guestInfo.guestId} WHERE roomId = ${guestInfo.roomId}`
+    const sqlStr=`UPDATE ev_guest SET ? WHERE guestId = ${guestInfo.guestId}`
+    db.query(roomSql,(err,result)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        db.query(roomSql2,(err,result)=>{
+            if(err) return res.cc(500,'数据库查询错误')
+            db.query(sqlStr,guestInfo,(err,result)=>{
+                if(err) return res.cc(500,'数据库查询错误')
+                res.send({code:200,msg:'编辑成功'})
+            })
+        })
+    })
+}
 
 // 根据顾客id获取顾客已经开好的房间
 exports.getGuestRoom=(req,res)=>{
