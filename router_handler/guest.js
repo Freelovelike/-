@@ -109,3 +109,28 @@ exports.addGuest=(req,res)=>{
         })
     })
 }
+
+// 根据顾客id获取顾客已经开好的房间
+exports.getGuestRoom=(req,res)=>{
+    const guest=req.query
+    const sqlStr=`
+    select * from ev_room 
+    JOIN ev_guest ON ev_room.guestId=ev_guest.guestId
+	JOIN ev_roomType ON ev_room.roomTypeId=ev_roomType.roomTypeId
+    where 
+    (${guest.guestId} IS NULL OR ev_room.guestId = ${guest.guestId})   
+	AND
+    (${guest.roomTypeId} IS NULL OR ev_room.roomTypeId = ${guest.roomTypeId})
+    `
+    db.query(sqlStr,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        const data={
+            guestId:results[0].guestId,
+            roomId:results[0].roomId,
+            roomTypeId:results[0].roomTypeId,
+            guestName:results[0].guestName,
+            roomTypeName:results[0].roomTypeName
+        }
+        return res.send({code:200,msg:'获取成功',data})
+    })
+}

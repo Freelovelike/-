@@ -15,5 +15,8 @@ router.get('/getCheckOutList',guest.getCheckOutList)
 // 新增顾客（入住用户）
 router.post('/addGuest',guest.addGuest)
 
+// 根据顾客id获取顾客已经开好的房间
+router.get('/getGuestRoom',guest.getGuestRoom)
+
 // 将路由对象暴露出去
 module.exports=router
