@@ -101,9 +101,11 @@ exports.addGuest=(req,res)=>{
     const sqlStr='insert into ev_guest set ?'
     db.query(sqlStr,guestInfo,(err,result)=>{
         if(err) return res.cc(500,'数据库查询错误')
+        // 获取刚自增的顾客id
+        const guestId=result.insertId
         // 更新房间状态
-        const roomSql='update ev_room set roomStateId=2 where roomId=?'
-        db.query(roomSql,[roomId],(err,result)=>{
+        const roomSql='update ev_room set roomStateId=2,guestId=? where roomId=?'
+        db.query(roomSql,[guestId,roomId],(err,result)=>{
             if(err) return res.cc(500,'数据库查询错误')
             res.send({code:200,msg:'新增成功'})
         })
