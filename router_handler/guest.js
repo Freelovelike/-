@@ -20,16 +20,16 @@ exports.getUserGuest=(req,res)=>{
     ]
     // 构建sql语句
     const sqlStr = `
-    SELECT *
-    FROM ev_guest
-    JOIN ev_residestate ON ev_guest.resideStateId = ev_residestate.resideStateId
-    JOIN ev_room ON ev_guest.roomId = ev_room.roomId
-    JOIN ev_roomstate ON ev_room.roomStateId = ev_roomstate.roomStateId
-    JOIN ev_roomtype ON ev_room.roomTypeId = ev_roomtype.roomTypeId
+    SELECT eg.*,state.resideStateName,room.roomStateId,room.roomTypeId,rType.bedNum,rType.roomTypeName,rType.roomTypePrice
+    FROM ev_guest as eg
+    JOIN ev_residestate as state ON eg.resideStateId = state.resideStateId
+    JOIN ev_room as room ON eg.roomId = room.roomId
+    JOIN ev_roomstate as rState ON room.roomStateId = rState.roomStateId
+    JOIN ev_roomtype as rType ON room.roomTypeId = rType.roomTypeId
     WHERE
-        (? IS NULL OR ev_guest.resideStateId = ?)
+        (? IS NULL OR eg.resideStateId = ?)
         AND
-        (? IS NULL OR ev_guest.guestName = ?)
+        (? IS NULL OR eg.guestName = ?)
     LIMIT ${pageSize} OFFSET ${offset}
     `
     // 执行sql语句
@@ -62,8 +62,7 @@ exports.getUserGuest=(req,res)=>{
                         bedNum:item.bedNum,
                         roomTypeId:item.roomTypeId,
                         roomTypeName:item.roomTypeName,
-                        roomTypePrice:item.roomTypePrice,
-                        typeDescription:item.typeDescription
+                        roomTypePrice:item.roomTypePrice
                     }
                 },
                 roomId:item.roomId,
@@ -169,13 +168,11 @@ exports.checkOut=(req,res)=>{
     const sqlStr=`
     update ev_guest set resideStateId=2,leaveDate=?,totalMoney=${totalPrice} where guestId=${guestInfo.guestId}
     `
+    const roomSql=`UPDATE ev_room SET roomStateId=1,guestId = NULL WHERE guestId = ${guestInfo.guestId}`
     db.query(sqlStr,[leaveDate],(err,result)=>{
         if(err) return res.cc(500,'数据库查询错误')
         // 更新入住房间信息
-        const sqlRoomStr=`
-        update ev_room set roomStateId=1,guestId=null where roomId=${guestInfo.roomId}
-        `
-        db.query(sqlRoomStr,(err,result)=>{
+        db.query(roomSql,(err,result)=>{
             if(err) return res.cc(500,'数据库查询错误')
             res.send({code:200,msg:'结账成功'})
         })
