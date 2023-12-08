@@ -24,5 +24,8 @@ router.post('/checkOut',guest.checkOut)
 // 根据顾客id获取顾客已经开好的房间
 router.get('/getGuestRoom',guest.getGuestRoom)
 
+// 删除功能
+router.get('/delGuest',guest.delGuest)
+
 // 将路由对象暴露出去
 module.exports=router

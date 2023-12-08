@@ -182,6 +182,18 @@ exports.checkOut=(req,res)=>{
     })
 }
 
+// 删除功能
+exports.delGuest=(req,res)=>{
+    const guestId=req.query.guestId
+    const sqlStr=`
+    delete from ev_guest where guestId=${guestId}
+    `
+    db.query(sqlStr,(err,result)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        res.send({code:200,msg:'删除成功'})
+    })
+}
+
 // 根据顾客id获取顾客已经开好的房间
 exports.getGuestRoom=(req,res)=>{
     const guest=req.query
