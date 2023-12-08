@@ -162,3 +162,12 @@ exports.delRoom=(req,res)=>{
         return res.send({code:200,msg:'删除成功'})
     })
 }
+
+// 查询酒店房型销售额信息
+exports.hotelSaleInfo=(req,res)=>{
+    const sqlStr='select roomTypeName,typeTotalMoney from ev_roomtype'
+    db.query(sqlStr,(err,results)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        return res.send({code:200,msg:'查询成功',data:results})
+    })
+}

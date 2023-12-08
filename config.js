@@ -4,5 +4,5 @@ module.exports = {
     // 加密和解密的 Token的密钥
     jwtSecretKey:'xiaobai No1.^_^',
     // Token的有效期
-    expiresIn:'10h'
+    expiresIn:'1d'
 }

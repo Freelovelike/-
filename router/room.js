@@ -36,5 +36,8 @@ router.post('/editRoom',roomType.editRoom)
 // 删除房间
 router.get('/delRoom',roomType.delRoom)
 
+//  查询酒店房型销售额信息
+router.get('/hotelSaleInfo',roomType.hotelSaleInfo)
+
 // 将路由对象暴露出去
 module.exports=router

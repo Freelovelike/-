@@ -20,7 +20,7 @@ exports.getUserGuest=(req,res)=>{
     ]
     // 构建sql语句
     const sqlStr = `
-    SELECT eg.*,state.resideStateName,room.roomStateId,room.roomTypeId,rType.bedNum,rType.roomTypeName,rType.roomTypePrice
+    SELECT eg.*,state.resideStateName,room.roomStateId,room.roomTypeId,rType.bedNum,rType.roomTypeName,rType.roomTypePrice,rType.typeTotalMoney
     FROM ev_guest as eg
     JOIN ev_residestate as state ON eg.resideStateId = state.resideStateId
     JOIN ev_room as room ON eg.roomId = room.roomId
@@ -62,7 +62,8 @@ exports.getUserGuest=(req,res)=>{
                         bedNum:item.bedNum,
                         roomTypeId:item.roomTypeId,
                         roomTypeName:item.roomTypeName,
-                        roomTypePrice:item.roomTypePrice
+                        roomTypePrice:item.roomTypePrice,
+                        typeTotalMoney:item.typeTotalMoney
                     }
                 },
                 roomId:item.roomId,
@@ -162,6 +163,10 @@ exports.checkOut=(req,res)=>{
     const roomPrice=guestInfo.roomTypePrice*dayDate
     // 总金额=押金-花费的金额
     const totalPrice=guestInfo.deposit-roomPrice
+    // 房间类型售出总金额
+    const typeMoney=guestInfo.typeTotalMoney+roomPrice
+    // 房间类型ID
+    const roomTypeId=guestInfo.roomTypeId
     // 结束时间--转换格式
     const leaveDate=moment(endDate).format('YYYY-MM-DD HH:mm:ss')
     // sql语句
@@ -169,12 +174,17 @@ exports.checkOut=(req,res)=>{
     update ev_guest set resideStateId=2,leaveDate=?,totalMoney=${totalPrice} where guestId=${guestInfo.guestId}
     `
     const roomSql=`UPDATE ev_room SET roomStateId=1,guestId = NULL WHERE guestId = ${guestInfo.guestId}`
+    const roomTypeSql=`UPDATE ev_roomType SET typeTotalMoney=${typeMoney} where roomTypeId=${roomTypeId}`
     db.query(sqlStr,[leaveDate],(err,result)=>{
         if(err) return res.cc(500,'数据库查询错误')
         // 更新入住房间信息
         db.query(roomSql,(err,result)=>{
             if(err) return res.cc(500,'数据库查询错误')
-            res.send({code:200,msg:'结账成功'})
+            // 更新房间对应类型的销售额
+            db.query(roomTypeSql,(err,result)=>{
+                if(err) return res.cc(500,'数据库查询错误')
+                res.send({code:200,msg:'结账成功'})
+            })
         })
     })
 }
