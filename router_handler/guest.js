@@ -1,6 +1,7 @@
 // 导入数据库模块
 const db = require('../db/index.js')
-
+// moment
+const moment = require('moment')
 // 获取入住用户列表信息
 exports.getUserGuest=(req,res)=>{
     // 获取客户端传递的分页参数，默认为第一页，每页5条数据
@@ -139,6 +140,44 @@ exports.editGuest=(req,res)=>{
                 if(err) return res.cc(500,'数据库查询错误')
                 res.send({code:200,msg:'编辑成功'})
             })
+        })
+    })
+}
+
+// 结账功能
+exports.checkOut=(req,res)=>{
+    // 前端传过来的数据
+    const guestInfo=req.body
+    // 结账时获取当前日期与入住日期计算入住的天数
+    // 定义开始日期和结束日期
+    const startDate = new Date(guestInfo.resideDate)
+    const endDate = new Date()
+    // 将结束时间设为中午12点
+    const noonEndTime = new Date(endDate)
+    noonEndTime.setHours(12, 0, 0, 0)
+    // 将毫秒数转换为天数
+    const differenceInDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+    // 天数
+    const dayDate=Math.floor(endDate>noonEndTime?differenceInDays+1:differenceInDays)
+    // 花费的金额
+    const roomPrice=guestInfo.roomTypePrice*dayDate
+    // 总金额=押金-花费的金额
+    const totalPrice=guestInfo.deposit-roomPrice
+    // 结束时间--转换格式
+    const leaveDate=moment(endDate).format('YYYY-MM-DD HH:mm:ss')
+    // sql语句
+    const sqlStr=`
+    update ev_guest set resideStateId=2,leaveDate=?,totalMoney=${totalPrice} where guestId=${guestInfo.guestId}
+    `
+    db.query(sqlStr,[leaveDate],(err,result)=>{
+        if(err) return res.cc(500,'数据库查询错误')
+        // 更新入住房间信息
+        const sqlRoomStr=`
+        update ev_room set roomStateId=1,guestId=null where roomId=${guestInfo.roomId}
+        `
+        db.query(sqlRoomStr,(err,result)=>{
+            if(err) return res.cc(500,'数据库查询错误')
+            res.send({code:200,msg:'结账成功'})
         })
     })
 }

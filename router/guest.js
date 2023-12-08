@@ -18,6 +18,9 @@ router.post('/addGuest',guest.addGuest)
 // 编辑顾客（入住用户）
 router.post('/editGuest',guest.editGuest)
 
+// 结账功能
+router.post('/checkOut',guest.checkOut)
+
 // 根据顾客id获取顾客已经开好的房间
 router.get('/getGuestRoom',guest.getGuestRoom)
 
