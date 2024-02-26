@@ -6,6 +6,7 @@ const app = express()
 
 // 导入CORS中间件
 const cors = require('cors')
+
 // 将CORS注册为全局中间件
 app.use(cors())
 // 设置静态文件目录
@@ -38,11 +39,14 @@ const userRouter=require('./router/user.js')
 const userInfoRouter=require('./router/userInfo.js')
 const roomRouter=require('./router/room.js')
 const guestRouter=require('./router/guest.js')
+const shopList =require('./router/shop_room_type.js')
+
 const joi=require('joi')
 app.use('/api',userRouter)
 app.use('/my',userInfoRouter)
 app.use('/room',roomRouter)
 app.use('/guest',guestRouter)
+app.use('/shop',shopList)
 
 
 // 定义错误级别的中间件

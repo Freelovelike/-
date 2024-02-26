@@ -13,6 +13,7 @@ const config=require('../config.js')
 exports.regUser = function(req, res){
     // 获取客户端提交到服务器的用户信息
     const userInfo=req.body
+    userInfo.roleId=2
     // 定义SQL语句，查询用户名是否被占用
     const sqlStr='select * from ev_users where username=?'
     db.query(sqlStr,[userInfo.username],(err,results)=>{
