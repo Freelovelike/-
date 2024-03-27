@@ -44,6 +44,7 @@ const Health =require('./router/Health.js')
 const message=require("./router/message.js")
 const comment=require('./router/comment.js')
 const quota=require('./router/quota.js')
+const indicator_anaysis=require('./router/indicator_anaysis.js')
 
 
 const joi=require('joi')
@@ -56,6 +57,7 @@ app.use('/Health',Health)
 app.use('/message',message)
 app.use('/comment', comment)
 app.use('/quota',quota)
+app.use('/indicator_anaysis',indicator_anaysis)
 
 
 
