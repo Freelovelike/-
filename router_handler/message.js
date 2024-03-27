@@ -4,7 +4,7 @@ const db = require("../db/index.js");
 exports.createMessage = (req, res) => {
   // 获取客户端提交过来的数据
   const message = req.body.message;
-  const userid = req.body.userid;
+  const userid = req.user.id;
   const data = { message,user_id: userid };
   const sql = "insert into ev_message set ?";
   db.query(sql, data, (err, results) => {
@@ -16,7 +16,7 @@ exports.createMessage = (req, res) => {
 };
 // 删除留言
 exports.deleteMessage = (req, res) => {
-  const id = req.query.id;
+  const id = req.usre.id;
   const sql = "delete from ev_message where id=?";
   db.query(sql, id, (err, results) => {
     if (err) return res.cc(err);
@@ -27,7 +27,7 @@ exports.deleteMessage = (req, res) => {
 };
 
 exports.updateMessage = (req, res) => {
-  const id = req.body.id;
+  const id = req.user.id;
   const message = req.body.message;
   const sql = "update ev_message set message = ? where id=?";
 

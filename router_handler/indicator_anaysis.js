@@ -3,7 +3,7 @@ const db = require("../db/index.js");
 
 exports.getIndicatorAnaysisList = (req, res) => {
   // 分页
-  const userid = req.query.userid;
+  const userid = req.user.id;
   const pageSize = req.query.pageSize || 10;
   const pageNum = req.query.pageNum || 1;
   const sql = `select * from indicator_anaysis where user_id= ? limit ${
@@ -36,7 +36,7 @@ exports.createIndicatorAnaysis = (req, res) => {
     age,
     healthy,
     suggestion,
-    user_id,
+    user_id:req.user.id,
     create_at: new date(),
   };
   const sql = `insert into indicator_anaysis set ?`;

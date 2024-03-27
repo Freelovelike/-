@@ -46,6 +46,7 @@ exports.login = function(req, res){
         if(results.length!==1){
             return res.cc(400,'登录失败')
         }
+        console.log({results});
         // TODO: 在服务端生成Token的字符串
         const user={...results[0],password:'',user_pic:''}
         // 对用户的信息进行加密，生成Token字符串
