@@ -22,6 +22,22 @@ exports.findRoomTypeList = (req,res)=>{
         })
     })
 }
+// 模拟请求对象和响应对象
+// const req = {
+//     query: {
+//         page: 1,
+//         pageSize: 5
+//     }
+// };
+// const res = {
+//     cc: (status, message) => {
+//         console.error('错误:', status, message);
+//     },
+//     send: (data) => {
+//         console.log('响应数据:', data);
+//     }
+// };
+// exports.findRoomTypeList(req, res);
 
 // 新增房型信息
 exports.addRoomType = (req,res)=>{

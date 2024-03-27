@@ -39,7 +39,9 @@ exports.login = function(req, res){
     const userInfo=req.body
     // 定义SQL语句
     const sqlStr='select * from ev_users where username=? and password=?'
+    console.log({userInfo})
     db.query(sqlStr,[userInfo.username,userInfo.password],(err,results)=>{
+        console.log({err});
         if(err) return res.cc(500,'数据库查询错误')
         if(results.length!==1){
             return res.cc(400,'登录失败')

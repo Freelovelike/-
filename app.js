@@ -40,6 +40,11 @@ const userInfoRouter=require('./router/userInfo.js')
 const roomRouter=require('./router/room.js')
 const guestRouter=require('./router/guest.js')
 const shopList =require('./router/shop_room_type.js')
+const Health =require('./router/Health.js')
+const message=require("./router/message.js")
+const comment=require('./router/comment.js')
+const quota=require('./router/quota.js')
+
 
 const joi=require('joi')
 app.use('/api',userRouter)
@@ -47,6 +52,11 @@ app.use('/my',userInfoRouter)
 app.use('/room',roomRouter)
 app.use('/guest',guestRouter)
 app.use('/shop',shopList)
+app.use('/Health',Health)
+app.use('/message',message)
+app.use('/comment', comment)
+app.use('/quota',quota)
+
 
 
 // 定义错误级别的中间件
